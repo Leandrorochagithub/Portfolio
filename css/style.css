@@ -101,7 +101,7 @@ header .profile-pic {
     height: 150px;
     object-fit: cover;
     border-radius: 50%;
-    border: 2px solid #cad7e4;
+    border: 2px solid var(--cor-hr);
     margin-bottom: 20px;
 }
 
@@ -306,7 +306,6 @@ a {
 
 a:hover {
     color: #ffffff;
-    text-decoration: underline;
 }
 
 /* --- Responsividade --- */
