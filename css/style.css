@@ -23,16 +23,13 @@ body {
 
 /* --- Barra de Navegação Horizontal Fixa no Topo --- */
 .top-nav {
-    position: fixed;
-    left: 0;
+    position: fixed; /* Fixa no topo */
+    left: 0; /* Fixar na borda sem deixar espaço */
     top: 0;
-    width: 100%;
+    width: 100%; /* Preencher toda a largura */
     height: auto;
     background-color: rgba(25, 25, 25, 0.98);
-    backdrop-filter: blur(10px);
     padding: 15px 30px;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
-    z-index: 9999;
     border-bottom: 1px solid #444;
     display: flex;
     align-items: center;
@@ -41,16 +38,9 @@ body {
 
 /* Estilo da lista dentro da barra de navegação */
 .top-nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    gap: 5px;
-}
-
-/* Estilo dos itens da lista */
-.top-nav li {
-    margin-bottom: 0;
+    list-style: none; /* Remoce estilo*/
+    display: flex; /* Deixa na horizonal */
+    gap: 5px; /*Disntância entre os itens */
 }
 
 /* Estilo dos links na barra de navegação */
@@ -58,10 +48,10 @@ body {
     color: #00aaff;
     text-decoration: none;
     font-weight: bold;
-    display: block;
+    /*display: block;*/
     padding: 10px 20px;
     border-radius: 6px;
-    transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+    transition: background-color 0.2s, color 0.2s, transform 0.2s;
     white-space: nowrap;
 }
 
@@ -303,14 +293,17 @@ a {
     color: #00ccff;
     text-decoration: none;
     transition: color 0.2s ease;
+    padding: 20px;
 }
 
-a:hover {
+footer a:hover {
+    background-color: rgba(0, 170, 255, 0.15);
     color: #ffffff;
-    background-color: rgba(0, 170, 255, 0.30);
-    padding: 8px;
-    border-radius: 6px;
+    text-decoration: none;
     transform: translateY(-2px);
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 6px;
 }
 
 /* --- Responsividade --- */
