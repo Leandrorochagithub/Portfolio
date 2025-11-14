@@ -174,12 +174,7 @@ li {
     box-sizing: border-box;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
-/*
-.info-box:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
-}
-*/
+
 /* Ícones */
 .info-box .icon-placeholder {
     width: 50px;
