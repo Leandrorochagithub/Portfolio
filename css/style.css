@@ -45,7 +45,7 @@ body {
 
 /* Estilo dos links na barra de navegação */
 .top-nav a {
-    color: #00aaff;
+    color: #00ccff;
     text-decoration: none;
     font-weight: bold;
     /*display: block;*/
@@ -174,12 +174,12 @@ li {
     box-sizing: border-box;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
-
+/*
 .info-box:hover {
     transform: translateY(-6px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
 }
-
+*/
 /* Ícones */
 .info-box .icon-placeholder {
     width: 50px;
@@ -281,7 +281,7 @@ footer p {
     margin-bottom: 20px;
 }
 
-footer .contact-links a {
+.contact-links a {
     color: #00ccff;
     margin: 0 18px;
     font-weight: bold;
@@ -296,7 +296,7 @@ a {
     padding: 20px;
 }
 
-footer a:hover {
+a:hover {
     background-color: rgba(0, 170, 255, 0.15);
     color: #ffffff;
     text-decoration: none;
