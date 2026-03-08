@@ -1,212 +1,411 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-
+<html lang="pt-pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leandro da Rocha - Portfólio de Dados</title>
-    <link rel="stylesheet" href="./css/style.css">
+    <title>Leandro Rocha | Data & Analytics Portfolio</title>
+    
+    <!-- Favicon via SVG (Ícone da Barra do Navegador) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+
+    <!-- Tailwind CSS para Estilização -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React & ReactDOM para Lógica de UI -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel para processar JSX diretamente no browser -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: { 750: '#1e293b' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .glass-effect {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .transition-theme { transition: background-color 0.3s, border-color 0.3s, color 0.3s; }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float { animation: float 4s ease-in-out infinite; }
+    </style>
 </head>
-
 <body>
+    <div id="root"></div>
 
-    <!-- Barra de Navegação Fixa no Topo -->
-    <nav class="top-nav">
-        <ul>
-            <li><a href="#sobre">Sobre mim</a></li>
-            <li><a href="#experiencia">Experiência</a></li>
-            <li><a href="#habilidades">Habilidades</a></li>
-            <li><a href="#projetos">Projetos</a></li>
-            <li><a href="#objetivos">Objetivos</a></li>
-            <li><a href="#contato">Contato</a></li>
-        </ul>
-    </nav>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
 
-    <header>
-        <img src="./imagens/foto-perfil.png" alt="Foto de Leandro" width="150" class="profile-pic">
-        <h1>Leandro da Rocha Ferreira</h1>
-        <p class="subtitle"><strong>Analista de Dados | Power BI Analist | Em Transição para Engenharia de
-                Dados</strong></p>
-        <p>Transformando dados em decisões estratégicas. Power BI, Python e SQL com foco em pipelines ETL escaláveis e
-            dashboards analíticos.</p>
-        <hr>
-    </header>
+        // --- Componente de Ícones SVG ---
+        const Icon = ({ name, size = 20, className = "" }) => {
+            const icons = {
+                Sun: <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41M12 7a5 5 0 110 10 5 5 0 010-10z" />,
+                Moon: <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />,
+                Github: <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22" />,
+                Linkedin: <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2zM4 2a2 2 0 110 4 2 2 0 010-4z" />,
+                ExternalLink: <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6m4-3h6v6m-11 5L21 3" />,
+                Mail: <><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><path d="M22 6l-10 7L2 6" /></>,
+                Database: <><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></>,
+                BarChart3: <path d="M3 3v18h18M7 16v-4m4 4V9m4 7V5m4 11V1" />,
+                Workflow: <><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="15" width="6" height="6" rx="1"/><path d="M9 6h6a2 2 0 012 2v7"/><path d="M12 12h3"/></>,
+                Cpu: <><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/><path d="M9 1v3"/><path d="M15 1v3"/><path d="M9 20v3"/><path d="M15 20v3"/><path d="M20 9h3"/><path d="M20 15h3"/><path d="M1 9h3"/><path d="M1 15h3"/></>,
+                GitBranch: <><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 01-9 9"/></>,
+                ChevronRight: <path d="M9 18l6-6-6-6" />,
+                Menu: <><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></>,
+                X: <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>,
+                Layers: <><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></>,
+                Search: <><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65" /></>,
+                Send: <><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2" /></>,
+                User: <><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4" /></>,
+                MapPin: <><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" /></>,
+                Download: <><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></>
+            };
 
-    <main>
+            return (
+                <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    width={size} 
+                    height={size} 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    className={className}
+                >
+                    {icons[name] || null}
+                </svg>
+            );
+        };
 
-        <section id="sobre">
-            <h2>Sobre mim</h2>
-            <p>Analista de BI em transição para <strong>Engenharia de Dados</strong>. Com experiência em ETL e
-                otimização de performance no <strong>Power BI</strong>, estou desenvolvendo habilidades em <strong>SQL
-                    Server</strong>, <strong>T-SQL</strong>, <strong>Python</strong>, <strong>Azure Data
-                    Factory</strong> e <strong>PySpark</strong>.</p>
-        </section>
+        const PROFILE_DATA = {
+            name: "Leandro Rocha",
+            role: "Analista de Dados | Desenvolvedor BI",
+            subRole: "BI & Analytics Engineer",
+            location: "Brasília, Distrito Federal",
+            about: "Olá, o meu nome é Leandro, transformo dados brutos em insights estratégicos. Utilizo SQL, Python e Power BI, com foco na construção de pipelines de dados eficientes e modelagens robustas (Star Schema/Snowflake).",
+            email: "leandrodarochaferreira@gmail.com",
+            cvUrl: "curriculo.pdf", // Altere para o link do seu PDF
+            socials: {
+                github: "https://github.com/Leandrorochagithub",
+                linkedin: "https://www.linkedin.com/in/leandro-d-8524b4160/",
+            },
+            skillGroups: [
+                {
+                    title: "Core Stack",
+                    skills: [
+                        { name: "SQL", icon: "Database" },
+                        { name: "Power BI", icon: "BarChart3" },
+                        { name: "Python para Dados", icon: "Cpu" },
+                        { name: "Modelagem de Dados", icon: "Layers" },
+                        { name: "ETL / ELT", icon: "Workflow" },
+                        { name: "Git", icon: "GitBranch" }
+                    ]
+                },
+                {
+                    title: "Estudo Ativo",
+                    skills: [
+                        { name: "dbt", icon: "Layers", extraClass: "text-orange-500" },
+                        { name: "Microsoft Fabric", icon: "Layers", extraClass: "text-blue-400" },
+                        { name: "BigQuery", icon: "Search", extraClass: "text-blue-500" },
+                        { name: "Data Warehouse", icon: "Database" }
+                    ]
+                }
+            ],
+            projects: [
+                {
+                    title: "Dashboard de Performance de Inventário",
+                    description: "Criei KPIs em DAX para medir o impacto financeiro das perdas, a acuracidade do inventário e a performance por filial. Desenvolvi um ETL no Power Query (M) para migrar o modelo de uma tabela centralizada para um Star Schema, garantindo performance e escalabilidade.  A otimização do modelo resultou em uma redução de 98,8% no tempo de carregamento dos visuais, comprovado via Analisador de Desempenho.",
+                    techs: ["Power BI", "Power Query", "ETL", "DAX", "Storytelling"],
+                    link: "https://app.powerbi.com/view?r=eyJrIjoiYmRjYjRjY2MtN2E3Yi00Yjk1LWI4ZTgtYjNiNzZjMzkwMDExIiwidCI6ImYyOWVkNTkxLTBlNzAtNDQ5ZC05NDU3LTViZTBjNjQwYWY5NSJ9",
+                    github: "https://github.com/Leandrorochagithub/Engenharia-e-Analise-de-Dados/tree/main/engenharia_de_dados/inventory_analysis_optimization"
+                },
+                {
+                    title: "Dashboard de Produtividade de equipe",
+                    description: "Utilizei o Power BI para monitoramento e otimização da produtividade operacional em inventários. O projeto abrange três dimensões principais de análise: performance das lojas, produtividade individual dos colaboradores e estatísticas detalhadas de produção.",
+                    techs: ["Power BI", "Power Query", "ETL", "DAX", "Storytelling"],
+                    link: "https://app.powerbi.com/view?r=eyJrIjoiMTFlYzFiNDEtZjk4Ni00YjM4LThlMDUtOTc2MzI0NjMwNjIyIiwidCI6ImYyOWVkNTkxLTBlNzAtNDQ5ZC05NDU3LTViZTBjNjQwYWY5NSJ9",
+                    github: "https://github.com/Leandrorochagithub/Engenharia-e-Analise-de-Dados/tree/main/business_intelligence/staff_produtivity"
+                },
+                {
+                    title: "Dashboard de Vendas",
+                    description: "Desenvolvimento de um Dashboard de Vendas interativo no Power BI, criado com o objetivo de transformar dados brutos em informações estratégicas para análise de desempenho comercial. O painel permite acompanhar de forma visual e dinâmica os principais indicadores de vendas, facilitando a identificação de tendências, padrões de consumo e oportunidades de melhoria no processo comercial.",
+                    techs: ["Power BI", "Power Query", "ETL", "DAX", "Storytelling"],
+                    link: "https://app.powerbi.com/view?r=eyJrIjoiN2VmOTA1NGQtOGZkMy00ZjkyLTljNmYtOWVhYzViMzZiMWQ2IiwidCI6ImYyOWVkNTkxLTBlNzAtNDQ5ZC05NDU3LTViZTBjNjQwYWY5NSJ9",
+                    github: "#"
+                },
+                {
+                    title: "Administração de Banco de Dados ",
+                    description: "Portfólio técnico demonstrando competências essenciais para a Administração de Banco de Dados (DBA) - Segurança, Backup e recuperação, automação, otimização - através de implementações práticas em SQL Server.",
+                    techs: ["SQL Server", "T-SQL", " SQL Server Agent", "Git"],
+                    link: "https://github.com/Leandrorochagithub/sql-server-dba-portfolio",
+                    github: "https://github.com/Leandrorochagithub/sql-server-dba-portfolio"
+                }
+            ]
+        };
 
-        <section id="experiencia">
-            <h2>Experiência Profissional</h2>
-            <div class="info-boxes-container">
-                <div class="info-box job-box">
-                    <h3>Gerente de Operações <span class="badge">Jan/2023 - Set/2025</span></h3>
-                    <p class="job-details">
-                        <span class="icon-placeholder-inline">🏢</span> Brasil Gestão de Estoque • <span
-                            class="icon-placeholder-inline">📍</span> Brasília-DF
-                    </p>
-                    <ul>
-                        <li>Desenvolvimento de dashboards interativos no <strong>Power BI</strong>, proporcionando
-                            insights acionáveis para a equipe de contagem e gestão de estoque.</li>
-                        <li>Implementação de processos de <strong>ETL</strong> utilizando <strong>Power Query</strong>
-                            para otimizar a coleta e transformação de dados de múltiplas fontes.</li>
-                        <li>Colaboração com equipes multifuncionais para identificar necessidades de dados e desenvolver
-                            soluções personalizadas.</li>
-                        <li>Desenvolvimento de scripts de verificação de inconsistências e otimização de processos com
-                            dados.</li>
-                    </ul>
+        function App() {
+            const [darkMode, setDarkMode] = useState(false);
+            const [isMenuOpen, setIsMenuOpen] = useState(false);
+            const [scrolled, setScrolled] = useState(false);
+            const [formStatus, setFormStatus] = useState(null);
+            const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+
+            useEffect(() => {
+                const handleScroll = () => setScrolled(window.scrollY > 20);
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            const toggleDarkMode = () => {
+                const newMode = !darkMode;
+                setDarkMode(newMode);
+                if (newMode) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            };
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                setFormStatus('sending');
+                setTimeout(() => {
+                    setFormStatus('success');
+                    setFormData({ name: '', email: '', message: '' });
+                    setTimeout(() => setFormStatus(null), 5000);
+                }, 1500);
+            };
+
+            return (
+                <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-theme overflow-x-hidden">
+                    
+                    {/* Header / Nav */}
+                    <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/80 dark:bg-slate-900/80 glass-effect shadow-sm py-3' : 'bg-transparent py-5'}`}>
+                        <div className="max-w-6xl mx-auto px-6 flex justify-between items-center">
+                            <span className="text-2xl font-black tracking-tighter text-blue-600">LR<span className="text-slate-400 font-light">.DATA</span></span>
+                            
+                            <div className="hidden md:flex items-center space-x-10">
+                                {['Sobre', 'Stack', 'Projetos', 'Contato'].map((item) => (
+                                    <a key={item} href={`#${item.toLowerCase()}`} className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-bold text-xs uppercase tracking-widest">{item}</a>
+                                ))}
+                                <button onClick={toggleDarkMode} className="p-2.5 rounded-xl bg-blue-50 dark:bg-slate-800 text-blue-600 shadow-sm border border-blue-100 dark:border-slate-700 hover:scale-110 transition-all">
+                                    {darkMode ? <Icon name="Sun" /> : <Icon name="Moon" />}
+                                </button>
+                            </div>
+
+                            <div className="md:hidden flex items-center space-x-4">
+                                <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 text-slate-600 dark:text-slate-300">
+                                    {isMenuOpen ? <Icon name="X" /> : <Icon name="Menu" />}
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Mobile Menu */}
+                        {isMenuOpen && (
+                            <div className="md:hidden bg-white dark:bg-slate-800 p-8 shadow-2xl border-t dark:border-slate-700 flex flex-col gap-6">
+                                {['Sobre', 'Stack', 'Projetos', 'Contato'].map((item) => (
+                                    <a key={item} href={`#${item.toLowerCase()}`} onClick={() => setIsMenuOpen(false)} className="font-black uppercase text-sm tracking-[0.2em]">{item}</a>
+                                ))}
+                                <button onClick={() => {toggleDarkMode(); setIsMenuOpen(false);}} className="flex items-center gap-3 font-bold text-blue-600 uppercase text-xs">
+                                    {darkMode ? <><Icon name="Sun" /> Modo Claro</> : <><Icon name="Moon" /> Modo Escuro</>}
+                                </button>
+                            </div>
+                        )}
+                    </nav>
+
+                    {/* Hero Section */}
+                    <section className="relative pt-48 pb-24 px-6 overflow-hidden">
+                        <div className="absolute top-0 right-0 -z-10 w-96 h-96 bg-blue-500/10 blur-[120px] rounded-full pointer-events-none animate-pulse"></div>
+                        <div className="max-w-6xl mx-auto flex flex-col items-center text-center">
+                            <div className="mb-6 flex flex-col items-center gap-3">
+                                <div className="py-2 px-5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-[10px] font-black border border-blue-200 dark:border-blue-800 uppercase tracking-[0.3em]">
+                                    {PROFILE_DATA.subRole} ⚡
+                                </div>
+                                <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 font-bold text-xs">
+                                    <Icon name="MapPin" size={14} className="text-blue-500" />
+                                    {PROFILE_DATA.location}
+                                </div>
+                            </div>
+                            
+                            <h1 className="text-6xl md:text-8xl font-black mb-8 tracking-tighter leading-[0.9]">
+                                Decisões baseadas <br /><span className="text-blue-600">em Dados.</span>
+                            </h1>
+                            <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-400 max-w-3xl mb-12 leading-relaxed font-medium">
+                                Eu sou o <span className="text-slate-900 dark:text-white font-black underline decoration-blue-500 decoration-4 underline-offset-4">{PROFILE_DATA.name}</span>. Transformo complexidade em clareza com pipelines e dashboards estratégicos.
+                            </p>
+                            
+                            <div className="flex flex-wrap gap-5 justify-center">
+                                <a href="#projetos" className="px-12 py-5 bg-blue-600 hover:bg-blue-700 text-white rounded-[1.2rem] font-black shadow-2xl shadow-blue-600/30 transition-all hover:-translate-y-1 active:scale-95 text-xs tracking-widest uppercase">Ver Projetos</a>
+                                <a href={PROFILE_DATA.cvUrl} download className="px-10 py-5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-[1.2rem] font-black shadow-2xl shadow-emerald-600/20 transition-all hover:-translate-y-1 active:scale-95 flex items-center gap-3 text-xs tracking-widest uppercase">
+                                    <Icon name="Download" size={18} /> Baixar Currículo
+                                </a>
+                                <a href={PROFILE_DATA.socials.linkedin} target="_blank" rel="noopener noreferrer" className="px-10 py-5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-[1.2rem] font-black hover:bg-slate-50 dark:hover:bg-slate-750 transition-all flex items-center gap-3 shadow-sm active:scale-95 text-xs tracking-widest uppercase">
+                                    <Icon name="Linkedin" size={18} /> LinkedIn
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Sobre */}
+                    <section id="sobre" className="py-28 bg-white dark:bg-slate-800/20 border-y border-slate-100 dark:border-slate-800">
+                        <div className="max-w-5xl mx-auto px-6">
+                            <div className="grid md:grid-cols-2 gap-20 items-center">
+                                <div className="relative">
+                                    <div className="absolute -top-4 -left-4 w-12 h-12 bg-blue-600/10 rounded-full"></div>
+                                    <h2 className="text-4xl font-black mb-8 tracking-tighter">Minha Jornada</h2>
+                                    <p className="text-xl text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{PROFILE_DATA.about}</p>
+                                </div>
+                                <div className="grid grid-cols-2 gap-5">
+                                    {[{label: "Bases", value: "Postgre/SqlServer"}, {label: "BI", value: "Power BI"}, {label: "Linguagem", value: "Python"}, {label: "Modelagem", value: "Star Schema"}].map((item, i) => (
+                                        <div key={i} className="p-6 rounded-3xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-sm transition-transform hover:scale-105">
+                                            <div className="text-blue-600 font-black text-[10px] mb-2 uppercase tracking-widest">{item.label}</div>
+                                            <div className="font-black text-lg tracking-tight">{item.value}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Stack Section */}
+                    <section id="stack" className="py-28 px-6">
+                        <div className="max-w-6xl mx-auto">
+                            <div className="text-center mb-20">
+                                <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tighter">Stack Tecnológica</h2>
+                                <p className="text-slate-500 font-bold uppercase text-xs tracking-[0.2em]">As ferramentas que utilizo para extrair valor dos dados.</p>
+                            </div>
+                            <div className="grid md:grid-cols-2 gap-16">
+                                {PROFILE_DATA.skillGroups.map((group, idx) => (
+                                    <div key={idx} className="space-y-8">
+                                        <h3 className="text-xl font-black text-blue-600 border-l-4 border-blue-600 pl-4 uppercase tracking-tighter">{group.title}</h3>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            {group.skills.map((skill, i) => (
+                                                <div key={i} className="flex items-center gap-5 p-6 bg-white dark:bg-slate-800 rounded-[1.5rem] border border-slate-100 dark:border-slate-700 shadow-sm transition-all hover:border-blue-400 hover:shadow-xl group">
+                                                    <div className={`p-3 bg-blue-50 dark:bg-slate-900 rounded-xl text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all ${skill.extraClass || ''}`}>
+                                                        <Icon name={skill.icon} />
+                                                    </div>
+                                                    <span className="font-black text-sm tracking-tight">{skill.name}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Projetos Section */}
+                    <section id="projetos" className="py-28 px-6 bg-slate-100 dark:bg-slate-900/80">
+                        <div className="max-w-6xl mx-auto">
+                            <h2 className="text-4xl md:text-5xl font-black mb-20 text-center tracking-tighter">Projetos em Destaque</h2>
+                            <div className="grid md:grid-cols-3 gap-10">
+                                {PROFILE_DATA.projects.map((project, i) => (
+                                    <div key={i} className="group flex flex-col bg-white dark:bg-slate-800 rounded-[3rem] overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 h-full">
+                                        <div className="p-10 flex flex-col h-full">
+                                            <div className="flex flex-wrap gap-2 mb-8">
+                                                {project.techs.map((tech, j) => (
+                                                    <span key={j} className="text-[9px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300">{tech}</span>
+                                                ))}
+                                            </div>
+                                            <h3 className="text-3xl font-black mb-5 leading-none group-hover:text-blue-600 transition-colors">{project.title}</h3>
+                                            <p className="text-slate-600 dark:text-slate-400 mb-10 leading-relaxed flex-grow font-medium text-sm">{project.description}</p>
+                                            <div className="flex items-center justify-between pt-8 border-t border-slate-50 dark:border-slate-700 mt-auto">
+                                                <div className="flex gap-4">
+                                                    {project.github && <a href={project.github} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-blue-600 transition-colors transform hover:scale-110"><Icon name="Github" size={22} /></a>}
+                                                </div>
+                                                {project.link !== "#" && (
+                                                    <a href={project.link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 font-black text-blue-600 group/link text-xs uppercase tracking-widest">
+                                                        VER DEMO <Icon name="ExternalLink" size={16} className="group-hover/link:translate-x-1 transition-transform" />
+                                                    </a>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Contato Section */}
+                    <section id="contato" className="py-28 px-6">
+                        <div className="max-w-6xl mx-auto">
+                            <div className="grid md:grid-cols-2 gap-0 bg-slate-900 dark:bg-slate-800 rounded-[4rem] overflow-hidden shadow-2xl relative border border-white/5">
+                                <div className="absolute -top-10 -right-10 w-80 h-80 bg-blue-600/20 blur-[100px] pointer-events-none"></div>
+                                
+                                <div className="p-16 md:p-24 text-white flex flex-col justify-center bg-blue-600">
+                                    <h2 className="text-5xl md:text-6xl font-black mb-8 tracking-tighter leading-none">Vamos analisar <br />o futuro?</h2>
+                                    <div className="flex items-center gap-2 text-blue-100 mb-12 font-bold opacity-80">
+                                        <Icon name="MapPin" size={18} />
+                                        {PROFILE_DATA.location}
+                                    </div>
+                                    
+                                    <div className="space-y-8">
+                                        <div className="flex items-center gap-5 group">
+                                            <div className="p-4 bg-white/10 rounded-2xl text-white group-hover:bg-white group-hover:text-blue-600 transition-all"><Icon name="Mail" size={28} /></div>
+                                            <a href={`mailto:${PROFILE_DATA.email}`} className="text-xl font-bold hover:underline break-all">{PROFILE_DATA.email}</a>
+                                        </div>
+                                        <div className="flex gap-5 pt-6">
+                                            <a href={PROFILE_DATA.socials.github} target="_blank" rel="noopener noreferrer" className="p-5 bg-white/10 hover:bg-white hover:text-blue-600 rounded-3xl transition-all shadow-lg text-white"><Icon name="Github" size={28} /></a>
+                                            <a href={PROFILE_DATA.socials.linkedin} target="_blank" rel="noopener noreferrer" className="p-5 bg-white/10 hover:bg-white hover:text-blue-600 rounded-3xl transition-all shadow-lg text-white"><Icon name="Linkedin" size={28} /></a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="p-16 md:p-24 bg-slate-900/50 backdrop-blur-md">
+                                    <form onSubmit={handleSubmit} className="space-y-6">
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-2">Nome Completo</label>
+                                            <div className="relative">
+                                                <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500"><Icon name="User" size={20} /></div>
+                                                <input required type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="Escreva o seu nome" className="w-full pl-14 pr-6 py-5 bg-slate-800 border border-slate-700 rounded-2xl focus:outline-none focus:border-blue-500 transition-all text-white placeholder:text-slate-600 font-bold" />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-2">E-mail para contato</label>
+                                            <div className="relative">
+                                                <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500"><Icon name="Mail" size={20} /></div>
+                                                <input required type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} placeholder="exemplo@email.com" className="w-full pl-14 pr-6 py-5 bg-slate-800 border border-slate-700 rounded-2xl focus:outline-none focus:border-blue-500 transition-all text-white placeholder:text-slate-600 font-bold" />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 ml-2">Assunto / Mensagem</label>
+                                            <textarea required rows="4" value={formData.message} onChange={(e) => setFormData({...formData, message: e.target.value})} placeholder="Em que posso ajudar?" className="w-full p-6 bg-slate-800 border border-slate-700 rounded-2xl focus:outline-none focus:border-blue-500 transition-all text-white placeholder:text-slate-600 resize-none font-bold"></textarea>
+                                        </div>
+                                        <button disabled={formStatus === 'sending'} type="submit" className="w-full py-6 bg-blue-600 hover:bg-blue-700 text-white rounded-3xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-4 transition-all active:scale-[0.98] shadow-2xl shadow-blue-600/40 disabled:bg-slate-700">
+                                            {formStatus === 'sending' ? "A PROCESSAR..." : formStatus === 'success' ? "MENSAGEM ENVIADA!" : <span className="flex items-center gap-3">ENVIAR MENSAGEM <Icon name="Send" size={20} /></span>}
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <footer className="py-16 border-t border-slate-200 dark:border-slate-800 px-6 text-center text-slate-400 font-black tracking-[0.3em] text-[10px] uppercase">
+                        © {new Date().getFullYear()} Leandro Rocha • DATA & ANALYTICS PORTFOLIO
+                    </footer>
                 </div>
-            </div>
-        </section>
+            );
+        }
 
-        <section class="habilidades">
-
-            <!-- SEÇÃO PRINCIPAL -->
-            <section id="habilidade-principal">
-                <h2>Habilidades Técnicas</h2>
-                <h3>🎯 Habilidades Principais</h3>
-                <hr>
-                <div class="info-boxes-container">
-                    <div class="info-box">
-                        <div class="icon-placeholder">📊</div>
-                        <h3>Power BI e DAX (Avançado)</h3>
-                        <p>ETL com Power Query, Modelagem Star Schema.</p>
-                    </div>
-
-                    <div class="info-box">
-                        <div class="icon-placeholder">💾</div>
-                        <h3>SQL & T-SQL (Intermediário)</h3>
-                        <p>Performance Tuning, Otimização.</p>
-                    </div>
-
-                    <div class="info-box">
-                        <div class="icon-placeholder">📈</div>
-                        <h3>Análise de Dados</h3>
-                        <p>KPIs, Métricas de Negócio, Dashboards.</p>
-                    </div>
-                </div> <!-- FECHANDO info-boxes-container -->
-            </section>
-
-            <!-- SEÇÃO DESENVOLVIMENTO -->
-            <section id="habilidade-desenvolvimento">
-                <h3>🚀 Em Desenvolvimento Ativo</h3>
-                <hr>
-                <div class="info-boxes-container"> <!-- ADICIONANDO O CONTAINER AQUI -->
-                    <div class="info-box">
-                        <div class="icon-placeholder">🐍</div>
-                        <h3>Python</h3>
-                        <p>Automação e Análise de Dados.</p>
-                    </div>
-
-                    <div class="info-box">
-                        <div class="icon-placeholder">⚙️</div>
-                        <h3>Azure Data Factory</h3>
-                        <p>Pipelines de Dados.</p>
-                    </div>
-
-                    <div class="info-box">
-                        <div class="icon-placeholder">⚡</div>
-                        <h3>PySpark</h3>
-                        <p>Processamento Distribuído.</p>
-                    </div>
-
-                    <div class="info-box">
-                        <div class="icon-placeholder">☁️</div>
-                        <h3>Azure SQL</h3>
-                        <p>Cloud Database Administration.</p>
-                    </div>
-                </div> <!-- FECHANDO info-boxes-container -->
-            </section>
-
-            <section id="projetos">
-                <h2>Projetos Destacados</h2>
-                <div class="info-boxes-container">
-                    <article class="info-box project-box">
-                        <h3>📈 Projeto 1: Análise e Otimização de Inventário (Power BI)</h3>
-
-                        <ul style="list-style-type: disc; margin-left: 20px;">
-                            <li>
-                                <strong>Engenharia de Dados (ETL):</strong> Desenvolvi um ETL complexo no Power Query (M) para migrar o modelo de uma tabela centralizada, monolítica, para um <strong>Star Schema</strong> otimizado, garantindo performance e escalabilidade.
-                            </li>
-                            <li>
-                                <strong>Otimização de Performance:</strong> A otimização do modelo resultou em uma <strong>redução de 98,8%</strong> no tempo de carregamento dos visuais, comprovado via Analisador de Desempenho.
-                            </li>
-                            <li>
-                                <strong>Business Intelligence (DAX):</strong> Criei KPIs avançados em DAX para medir o impacto financeiro das perdas, a acuracidade do inventário e a performance por filial.
-                            </li>
-                        </ul>
-                        <hr>
-                        <p><strong>Tecnologias:</strong> Power BI, Power Query (M), DAX, Modelagem Star Schema, Otimização de Performance</p>
-
-                        <p class="project-links">
-                            <a href="https://app.powerbi.com/view?r=eyJrIjoiYmRjYjRjY2MtN2E3Yi00Yjk1LWI4ZTgtYjNiNzZjMzkwMDExIiwidCI6ImYyOWVkNTkxLTBlNzAtNDQ5ZC05NDU3LTViZTBjNjQwYWY5NSJ9"
-                                target="_blank"><strong>Demo Interativo</strong> Dashboard</a>
-                            <br>
-                            <br>
-                            <a href="https://github.com/Leandrorochagithub/Engenharia-e-Analise-de-Dados/tree/main/engenharia_de_dados/inventory_analysis_optimization"
-                                target="_blank"><strong>Análise Técnica</strong> -
-                                GitHub</a>
-                        </p>
-                    </article>
-
-                    <article class="info-box project-box">
-                        <h3>📈 Projeto 2: Produtividade de Funcionários (Power BI)</h3>
-                        <p>Dashboard analítico desenvolvido em Power BI para monitoramento e otimização da produtividade operacional em inventários. O projeto abrange três dimensões principais de análise: performance das lojas, produtividade individual dos colaboradores e estatísticas detalhadas de produção.
-                        </p>
-                        <hr>
-                        <p><strong>Tecnologias:</strong> Power BI, Power Query (M), DAX</p>
-                        <p class="project-links">
-                            <a href="https://app.powerbi.com/view?r=eyJrIjoiMTFlYzFiNDEtZjk4Ni00YjM4LThlMDUtOTc2MzI0NjMwNjIyIiwidCI6ImYyOWVkNTkxLTBlNzAtNDQ5ZC05NDU3LTViZTBjNjQwYWY5NSJ9"
-                                target="_blank"><strong>Demo Interativo</strong> Dashboard</a>
-                            <br>
-                            <br>
-                            <a href="https://github.com/Leandrorochagithub/Engenharia-e-Analise-de-Dados/tree/main/business_intelligence/staff_produtivity"
-                                target="_blank"><strong>Análise Técnica</strong> - GitHub</a>
-                        </p>
-                    </article>
-
-                    <article class="info-box project-box">
-                        <h3>💾 Projeto 3: Administração de Banco de Dados (SQL Server)</h3>
-                        <p>Portfólio técnico demonstrando competências essenciais de um Administrador de Banco de Dados (DBA) - Segurança, Backup e recuperação, automação, otimização - através de implementações práticas em SQL Server.
-                        </p>
-                        <hr>
-                        <p><strong>Tecnologias:</strong> Microsoft SQL Server, Transact-SQL (T-SQL), SQL Server Management Studio (SSMS), SQL Server Agent, Git</p>
-                        <p class="project-links">
-                            <a href="https://github.com/Leandrorochagithub/sql-server-dba-portfolio"
-                                target="_blank"><strong>Análise Técnica</strong> - GitHub</a>
-                        </p>
-                    </article>
-
-                </div>
-            </section>
-
-            <section id="objetivos">
-                <h2>Objetivos de Aprendizagem e Desenvolvimento</h2>
-                <ul>
-                    <li>Azure Data Factory & Databricks</li>
-                    <li>Python (Pandas, PySpark) </li>
-                    <li>DP-203 (Data Engineering on Azure)</li>
-                </ul>
-            </section>
-
-    </main>
-
-    <footer id="contato">
-        <h2>Vamos Conversar?</h2>
-        <p>Pronto para transformar seus dados em vantagem competitiva? Entre em contato.</p>
-        <p class="contact-links">
-            <a href="mailto:leandrodarochaferreira@gmail.com">E-mail</a>
-            <a href="https://www.linkedin.com/in/leandro-d-8524b4160/" target="_blank">LinkedIn</a>
-            <a href="https://github.com/Leandrorochagithub" target="_blank">GitHub</a>
-        </p>
-    </footer>
-
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
 </body>
-
 </html>
